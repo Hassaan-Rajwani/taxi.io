@@ -1,10 +1,12 @@
 import { StyleSheet, View } from 'react-native';
-import Login from './view/logIn/login';
+// import Login from './view/logIn/login';
+import Dashbaord from './view/dashboard/dashbaord';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Login />
+      {/* <Login /> */}
+      <Dashbaord />
     </View>
   );
 }
