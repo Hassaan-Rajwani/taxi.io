@@ -1,12 +1,11 @@
 import { StyleSheet, View } from 'react-native';
-// import Login from './view/logIn/login';
-import Dashbaord from './view/dashboard/dashbaord';
+import { StatusBar } from 'expo-status-bar';
+import MainNavigator from './src/config/navigation';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      {/* <Login /> */}
-      <Dashbaord />
+      <MainNavigator />
     </View>
   );
 }
@@ -15,7 +14,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
