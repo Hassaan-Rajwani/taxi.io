@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react'
 import * as React from 'react'
 import * as Location from 'expo-location'
 import MapView, { Marker } from 'react-native-maps'
+import Autocomplete from 'react-native-autocomplete-input'
 
 export default function Dashbaord() {
     // const [modalVisible, setModalVisible] = useState(false)
     // const [address, setAddress] = useState('')
-    const adressArray = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike', 'Bike']
-    const [pickUp, setPickUp] = useState('')
-    const [dropOff, setDropOff] = useState('')
+    const adressArray = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike', 'Bike', 'Bike', 'Bike']
+    const [query, setQuery] = useState('')
+    const [places, setPlaces] = useState([])
     const [location, setLocation] = useState({
         // 24.9325637,67.0915428 D-Phase
         latitude: 24.9791542,
@@ -24,15 +25,53 @@ export default function Dashbaord() {
                 alert('Permission to access location was denied')
                 return
             }
-            let currentLocation = await Location.getCurrentPositionAsync({})
-            const { coords: { longitude, latitude } } = currentLocation
-            setLocation({ ...location, longitude, latitude })
-        })()
-    }, [])
+            // let currentLocation = await Location.getCurrentPositionAsync({})
+            // const { coords: { longitude, latitude } } = currentLocation
+            // setLocation({ ...location, longitude, latitude })
+            Location.watchPositionAsync({
+                accuracy: Location.Accuracy.Highest,
+                timeInterval: 100,
+                distanceInterval: 2
+            }, (currentLocation) => {
+                const { coords: { longitude, latitude } } = currentLocation
+                setLocation({ ...location, longitude, latitude });
+            })
+        })();
+    }, []);
+
+    const getPlaces = async (text) => {
+        setQuery(text)
+        const response = await fetch(`https://api.foursquare.com/v3/places/search?query=${text}&near=Karachi&limit=10`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: 'fsq3o0p28WfXqJpd4ed/WbeDIDd19eqi8cy1Vx1Qs5cFH0c='
+            }
+        })
+        const { results } = await response.json()
+        console.log('result --->', results)
+        setPlaces(results)
+    }
     return (
-        <View style={styles.container}>
-            <TextInput style={styles.textInput} placeholder="PickUp Location" />
-            <TextInput style={styles.textInput2} placeholder="DropOff Location" />
+        <View style={{ width: "100%" }}>
+            <View style={styles.autocompleteContainer}>
+                <Autocomplete
+                    placeholder="PickUp Location"
+                    style={styles.bar}
+                    data={places}
+                    value={query}
+                    onChangeText={getPlaces}
+                    flatListProps={{
+                        keyExtractor: (_, idx) => idx,
+                        renderItem: ({ item }) => (<View style={styles.autocompleteItem}>
+                            <Text onPress={() => { setPlaces(item) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
+                        </View>),
+                    }}
+                />
+            </View>
+
+            {/* <TextInput style={styles.textInput} placeholder="PickUp Location" /> */}
+            {/* <TextInput style={styles.textInput2} placeholder="DropOff Location" /> */}
+
             {/* <View style={styles.centeredView}>
                 <Modal
                     animationType="slide"
@@ -79,7 +118,7 @@ export default function Dashbaord() {
                     onDragStart={() => setLocation()}
                 />
             </MapView>
-            <View style={{ width: '100%', height: 550, backgroundColor: 'white', }}>
+            {/* <View style={{ width: '100%', height: 550, backgroundColor: 'white', }}>
                 <ScrollView style={styles.scrollView}>
                     {adressArray.map((item) => {
                         return (
@@ -89,7 +128,7 @@ export default function Dashbaord() {
                         )
                     })}
                 </ScrollView>
-            </View>
+            </View> */}
         </View>
     )
 }
@@ -120,6 +159,14 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
         borderRadius: 5,
         height: 45,
+    },
+    bar: {
+        paddingLeft: 10,
+        borderWidth: 1.5,
+        height: 45,
+        borderColor: 'lightgrey',
+        borderRadius: 5,
+        backgroundColor: 'white',
     },
     textInput2: {
         borderWidth: 1.5,
@@ -186,4 +233,26 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: 'bold',
     },
+    autocompleteContainer: {
+        flex: 1,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 10,
+        zIndex: 1,
+        width: '100%',
+        justifyContent: 'center',
+        paddingHorizontal: 15,
+    },
+    autocompleteItem: {
+        height: 50,
+        borderBottomWidth: 1,
+        borderBottomColor: 'lightgrey',
+        justifyContent: 'center',
+        paddingHorizontal: 10,
+        backgroundColor: 'white',
+    },
+    autocompleteText: {
+        fontSize: 18
+    }
 })

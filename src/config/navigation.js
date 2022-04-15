@@ -5,19 +5,20 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import 'react-native-gesture-handler'
 import Dashbaord from '../view/Dashbaord'
 import Login from '../view/Login'
+import Trips from '../view/Trips'
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator()
 
 export default function MainNavigator() {
-    const user = false
+    const user = true
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            {/* <Stack.Navigator>
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="Dashboard" component={Dashbaord} />
-            </Stack.Navigator>
-            {/* {user ? <MyDrawer /> : <AuthStack />} */}
+            </Stack.Navigator> */}
+            {user ? <MyDrawer /> : <AuthStack />}
         </NavigationContainer>
     )
 }
@@ -30,15 +31,16 @@ function AuthStack() {
 }
 function DashboardStack() {
     return (
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="Dashboard" component={Dashbaord} />
         </Stack.Navigator>
     )
 }
 function MyDrawer() {
     return (
-        <Drawer.Navigator>
+        <Drawer.Navigator useLegacyImplementation={true}>
             <Drawer.Screen name="Dashboard Stack" component={DashboardStack} />
+            <Drawer.Screen name="Your Trips" component={Trips} />
         </Drawer.Navigator>
     );
 }
