@@ -43,4 +43,4 @@ function MyDrawer() {
             <Drawer.Screen name="Your Trips" component={Trips} />
         </Drawer.Navigator>
     );
-}
+}   

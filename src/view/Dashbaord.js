@@ -11,6 +11,7 @@ export default function Dashbaord() {
     const adressArray = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike', 'Bike', 'Bike', 'Bike']
     const [query, setQuery] = useState('')
     const [places, setPlaces] = useState([])
+    const [hide, setHide] = useState(false) 
     const [location, setLocation] = useState({
         // 24.9325637,67.0915428 D-Phase
         latitude: 24.9791542,
@@ -30,7 +31,7 @@ export default function Dashbaord() {
             // setLocation({ ...location, longitude, latitude })
             Location.watchPositionAsync({
                 accuracy: Location.Accuracy.Highest,
-                timeInterval: 100,
+                // timeInterval: 100,
                 distanceInterval: 2
             }, (currentLocation) => {
                 const { coords: { longitude, latitude } } = currentLocation
@@ -50,11 +51,13 @@ export default function Dashbaord() {
         const { results } = await response.json()
         console.log('result --->', results)
         setPlaces(results)
+        setHide(false)
     }
     return (
         <View style={{ width: "100%" }}>
             <View style={styles.autocompleteContainer}>
                 <Autocomplete
+                    hideResults={hide}
                     placeholder="PickUp Location"
                     style={styles.bar}
                     data={places}
@@ -63,7 +66,7 @@ export default function Dashbaord() {
                     flatListProps={{
                         keyExtractor: (_, idx) => idx,
                         renderItem: ({ item }) => (<View style={styles.autocompleteItem}>
-                            <Text onPress={() => { setPlaces(item) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
+                            <Text onPress={() => {setLocation({...location, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude}), setHide(true) ,setQuery(item.name)}} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
                         </View>),
                     }}
                 />
