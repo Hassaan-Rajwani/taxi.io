@@ -6,6 +6,8 @@ import 'react-native-gesture-handler'
 import Dashbaord from '../view/Dashbaord'
 import Login from '../view/Login'
 import Trips from '../view/Trips'
+import Home from '../view/Home'
+import Driver from '../view/Driver'
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator()
@@ -24,14 +26,16 @@ export default function MainNavigator() {
 }
 function AuthStack() {
     return (
-        <Stack.Navigator>
-            <Stack.Screen name="Login" component={Login} />
-        </Stack.Navigator>
+            <Stack.Navigator>
+                <Stack.Screen name="Main Page" component={Home} />
+                <Stack.Screen name="Rider Login" component={Login} />
+                <Stack.Screen name="Driver Login" component={Driver} />
+            </Stack.Navigator>
     )
 }
 function DashboardStack() {
     return (
-        <Stack.Navigator screenOptions={{headerShown: false}}>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Dashboard" component={Dashbaord} />
         </Stack.Navigator>
     )

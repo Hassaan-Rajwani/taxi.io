@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image, TextInput, Alert, TouchableOpacity } fro
 import logo3 from '../../images/logo3.png';
 import * as Facebook from 'expo-facebook';
 
-export default function Login({ navigation }) {
+export default function Driver({navigation}) {
     async function logIn() {
         try {
             await Facebook.initializeAsync({
@@ -13,6 +13,7 @@ export default function Login({ navigation }) {
                     permissions: ['public_profile'],
                 });
             if (type === 'success') {
+                // Get the user's name using Facebook's Graph API
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
                 Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
                 navigation.navigate('Dashboard')
@@ -43,8 +44,8 @@ export default function Login({ navigation }) {
                     <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 10, width: 300, textAlign: 'center', padding: 5, borderRadius: 5 }}>Login With Facebook</Text>
                 </TouchableOpacity>
 
-                <View style={{ marginTop: 10 }}>
-                    <Text style={{ color: 'black', fontWeight: 'bold' }}>Dont't have an account?</Text>
+                <View style={{marginTop: 10}}>
+                    <Text style={{color: 'black', fontWeight: 'bold'}}>Dont't have an account?</Text>
                 </View>
             </View>
         </View>

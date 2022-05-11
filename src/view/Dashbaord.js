@@ -2,23 +2,31 @@ import { StyleSheet, Text, View, Dimensions, TextInput, Alert, Modal, Pressable,
 import { useState, useEffect } from 'react'
 import * as React from 'react'
 import * as Location from 'expo-location'
-import MapView, { Marker } from 'react-native-maps'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 import Autocomplete from 'react-native-autocomplete-input'
 
 export default function Dashbaord() {
-    // const [modalVisible, setModalVisible] = useState(false)
-    // const [address, setAddress] = useState('')
     const adressArray = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike', 'Bike', 'Bike', 'Bike']
     const [query, setQuery] = useState('')
+    const [query2, setQuery2] = useState('')
     const [places, setPlaces] = useState([])
-    const [hide, setHide] = useState(false) 
+    const [places2, setPlaces2] = useState([])
+    const [hide, setHide] = useState(false)
+    const [hide2, setHide2] = useState(false)
+    const [marker, setMarker] = useState(false)
     const [location, setLocation] = useState({
-        // 24.9325637,67.0915428 D-Phase
         latitude: 24.9791542,
         longitude: 67.0951098,
-        latitudeDelta: 0.005,
-        longitudeDelta: 0.005,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
     })
+    const [location2, setLocation2] = useState({
+        latitude: 24.9791542,
+        longitude: 67.0951098,
+        latitudeDelta: 0.001,
+        longitudeDelta: 0.001,
+    })
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync()
@@ -26,17 +34,17 @@ export default function Dashbaord() {
                 alert('Permission to access location was denied')
                 return
             }
-            // let currentLocation = await Location.getCurrentPositionAsync({})
-            // const { coords: { longitude, latitude } } = currentLocation
-            // setLocation({ ...location, longitude, latitude })
-            Location.watchPositionAsync({
-                accuracy: Location.Accuracy.Highest,
-                // timeInterval: 100,
-                distanceInterval: 2
-            }, (currentLocation) => {
-                const { coords: { longitude, latitude } } = currentLocation
-                setLocation({ ...location, longitude, latitude });
-            })
+            let currentLocation = await Location.getCurrentPositionAsync({})
+            const { coords: { longitude, latitude } } = currentLocation
+            setLocation({ ...location, longitude, latitude })
+            // Location.watchPositionAsync({
+            //     accuracy: Location.Accuracy.Highest,
+            //     // timeInterval: 100,
+            //     distanceInterval: 2
+            // }, (currentLocation) => {
+            //     const { coords: { longitude, latitude } } = currentLocation
+            //     setLocation({ ...location, longitude, latitude });
+            // })
         })();
     }, []);
 
@@ -53,6 +61,21 @@ export default function Dashbaord() {
         setPlaces(results)
         setHide(false)
     }
+    const getPlaces2 = async (text) => {
+        setQuery2(text)
+        const response = await fetch(`https://api.foursquare.com/v3/places/search?query=${text}&near=Karachi&limit=10`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: 'fsq3o0p28WfXqJpd4ed/WbeDIDd19eqi8cy1Vx1Qs5cFH0c='
+            }
+        })
+        const { results } = await response.json()
+        console.log('result --->', results)
+        setPlaces2(results)
+        setHide2(false)
+        setMarker(false)
+    }
+
     return (
         <View style={{ width: "100%" }}>
             <View style={styles.autocompleteContainer}>
@@ -66,46 +89,29 @@ export default function Dashbaord() {
                     flatListProps={{
                         keyExtractor: (_, idx) => idx,
                         renderItem: ({ item }) => (<View style={styles.autocompleteItem}>
-                            <Text onPress={() => {setLocation({...location, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude}), setHide(true) ,setQuery(item.name)}} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
+                            <Text onPress={() => { setLocation({ ...location, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude }), setHide(true), setQuery(item.name) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
                         </View>),
                     }}
                 />
             </View>
 
-            {/* <TextInput style={styles.textInput} placeholder="PickUp Location" /> */}
-            {/* <TextInput style={styles.textInput2} placeholder="DropOff Location" /> */}
+            <View style={{ flex: 1, position: 'absolute', top: 10, zIndex: 3, width: '100%', justifyContent: 'center', paddingHorizontal: 15 }}>
+                <Autocomplete
+                    hideResults={hide2}
+                    placeholder="DropOff Location"
+                    style={styles.bar2}
+                    data={places2}
+                    value={query2}
+                    onChangeText={getPlaces2}
+                    flatListProps={{
+                        keyExtractor: (_, idx) => idx,
+                        renderItem: ({ item }) => (<View style={styles.autocompleteItem}>
+                            <Text onPress={() => { setLocation2({ ...location2, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude }), setHide2(true), setQuery2(item.name), setMarker(true) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
+                        </View>),
+                    }}
+                />
+            </View>
 
-            {/* <View style={styles.centeredView}>
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modalVisible}
-                    onRequestClose={() => {
-                        Alert.alert('Modal has been closed.')
-                        setModalVisible(!modalVisible)
-                    }}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <TextInput onChangeText={setAddress} value={address} style={{ borderWidth: 1.5, borderColor: 'lightgrey', height: 40, width: '100%', paddingLeft: 10, marginBottom: 10, borderRadius: 5 }} placeholder="Search" />
-                            {adressArray.map((item) => {
-                                return (
-                                    <Pressable>
-                                        <Text onPress={() => { setAddress(item) }} style={styles.modalText}>{item}</Text>
-                                    </Pressable>
-                                )
-                            })}
-                            <Pressable
-                                style={[styles.button, styles.buttonClose]}
-                                onPress={() => setModalVisible(!modalVisible)}>
-                                <Text style={{ color: 'white', fontWeight: 'bold', textAlign: 'center', }}>Confirm</Text>
-                            </Pressable>
-                        </View>
-                    </View>
-                </Modal>
-                <Pressable style={[styles.button, styles.buttonOpen]} onPress={() => setModalVisible(true)}>
-                    <Text style={{ color: 'grey', fontWeight: 'bold' }}>{!address ? 'Enter Location Here !' : address}</Text>
-                </Pressable>
-            </View> */}
             <MapView
                 region={location}
                 style={styles.map}
@@ -120,6 +126,32 @@ export default function Dashbaord() {
                     anchor={{ x: 0.69, y: 1 }}
                     onDragStart={() => setLocation()}
                 />
+                {
+                    marker ?
+                        <Marker
+                            draggable
+                            onDragEnd={(t, map, coords) => setLocation2(coords)}
+                            coordinate={location2}
+                            position={location2}
+                            centerOffset={{ x: -18, y: -60 }}
+                            anchor={{ x: 0.69, y: 1 }}
+                            onDragStart={() => setLocation2()}
+                        />
+                        : null
+                }
+
+                {
+                    marker ?
+                        <Polyline
+                            coordinates={[location, location2]}
+                            strokeColor="#000"
+                            fillColor="rgba(255,0,0,0.5)"
+                            strokeWidth={2}
+                        />
+                        :
+                        null
+                }
+
             </MapView>
             {/* <View style={{ width: '100%', height: 550, backgroundColor: 'white', }}>
                 <ScrollView style={styles.scrollView}>
@@ -170,6 +202,15 @@ const styles = StyleSheet.create({
         borderColor: 'lightgrey',
         borderRadius: 5,
         backgroundColor: 'white',
+    },
+    bar2: {
+        paddingLeft: 10,
+        borderWidth: 1.5,
+        height: 45,
+        borderColor: 'lightgrey',
+        borderRadius: 5,
+        backgroundColor: 'white',
+        marginTop: 50,
     },
     textInput2: {
         borderWidth: 1.5,
@@ -242,7 +283,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         right: 0,
         top: 10,
-        zIndex: 1,
+        zIndex: 5,
         width: '100%',
         justifyContent: 'center',
         paddingHorizontal: 15,
