@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Dimensions, TextInput, Alert, Modal, Pressable, ScrollView, Image } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, TextInput, Alert, Modal, Pressable, ScrollView, Image, TouchableOpacity } from 'react-native'
 import { useState, useEffect } from 'react'
 import * as React from 'react'
 import * as Location from 'expo-location'
@@ -6,7 +6,8 @@ import MapView, { Marker, Polyline } from 'react-native-maps'
 import Autocomplete from 'react-native-autocomplete-input'
 
 export default function Dashbaord() {
-    const adressArray = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike', 'Bike', 'Bike', 'Bike']
+    const vehicals = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike']
+    const [selectVehical, setSelectVehical] = useState('')
     const [query, setQuery] = useState('')
     const [query2, setQuery2] = useState('')
     const [places, setPlaces] = useState([])
@@ -14,6 +15,8 @@ export default function Dashbaord() {
     const [hide, setHide] = useState(false)
     const [hide2, setHide2] = useState(false)
     const [marker, setMarker] = useState(false)
+    const [opt, setOpt] = useState(false)
+    const [go, setGo] = useState(false)
     const [location, setLocation] = useState({
         latitude: 24.9791542,
         longitude: 67.0951098,
@@ -106,7 +109,7 @@ export default function Dashbaord() {
                     flatListProps={{
                         keyExtractor: (_, idx) => idx,
                         renderItem: ({ item }) => (<View style={styles.autocompleteItem}>
-                            <Text onPress={() => { setLocation2({ ...location2, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude }), setHide2(true), setQuery2(item.name), setMarker(true) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
+                            <Text onPress={() => { setLocation2({ ...location2, longitude: item.geocodes.main.longitude, latitude: item.geocodes.main.latitude }), setHide2(true), setQuery2(item.name), setMarker(true), setOpt(true) }} style={styles.autocompleteText}>{item.name}, {item.location.address}</Text>
                         </View>),
                     }}
                 />
@@ -151,19 +154,33 @@ export default function Dashbaord() {
                         :
                         null
                 }
-
             </MapView>
-            {/* <View style={{ width: '100%', height: 550, backgroundColor: 'white', }}>
-                <ScrollView style={styles.scrollView}>
-                    {adressArray.map((item) => {
-                        return (
-                            <View style={{width: '100%', backgroundColor: 'white'}}>
-                                <Text style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
-                            </View>
-                        )
-                    })}
-                </ScrollView>
-            </View> */}
+
+            {
+                opt ?
+                    <View style={{ width: '100%', height: 250, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
+                        <ScrollView style={styles.scrollView}>
+                            {vehicals.map((item) => {
+                                return (
+                                    <View style={{ width: '100%', backgroundColor: 'white' }}>
+                                        <Text onPress={() => { setOpt(false), setGo(true) }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
+                                    </View>
+                                )
+                            })}
+                        </ScrollView>
+                    </View>
+                    :
+                    null
+            }
+
+            {
+                go ?
+                    <TouchableOpacity style={{ marginTop: 5, position: 'absolute', bottom: 100, zIndex: 99, width: '100%', paddingHorizontal: 40 }} onPress={() => {setGo(false)}}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 10, width: '100%', textAlign: 'center', padding: 10, borderRadius: 5 }}>Let's Go</Text>
+                    </TouchableOpacity>
+                    : 
+                    null
+            }
         </View>
     )
 }
