@@ -4,6 +4,8 @@ import * as React from 'react'
 import * as Location from 'expo-location'
 import MapView, { Marker, Polyline } from 'react-native-maps'
 import Autocomplete from 'react-native-autocomplete-input'
+import { useSelector } from 'react-redux'
+import { userInfo } from '../config/firebase'
 
 export default function Dashbaord() {
     const vehicals = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike']
@@ -29,6 +31,9 @@ export default function Dashbaord() {
         latitudeDelta: 0.001,
         longitudeDelta: 0.001,
     })
+
+    const user = useSelector(state => state.userReducer.user)
+    const driver = useSelector(state => state.driverReducer.user)
 
     useEffect(() => {
         (async () => {
@@ -77,6 +82,11 @@ export default function Dashbaord() {
         setPlaces2(results)
         setHide2(false)
         setMarker(false)
+    }
+
+    const continueRide = () => {
+        setGo(false)
+        userInfo(user.name, user.id, location, location2, selectVehical)
     }
 
     return (
@@ -160,10 +170,10 @@ export default function Dashbaord() {
                 opt ?
                     <View style={{ width: '100%', height: 250, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
                         <ScrollView style={styles.scrollView}>
-                            {vehicals.map((item) => {
+                            {vehicals.map((item, index) => {
                                 return (
                                     <View style={{ width: '100%', backgroundColor: 'white' }}>
-                                        <Text onPress={() => { setOpt(false), setGo(true) }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
+                                        <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical(selectVehical[index]), console.log(selectVehical) }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
                                     </View>
                                 )
                             })}
@@ -175,7 +185,7 @@ export default function Dashbaord() {
 
             {
                 go ?
-                    <TouchableOpacity style={{ marginTop: 5, position: 'absolute', bottom: 100, zIndex: 99, width: '100%', paddingHorizontal: 40 }} onPress={() => {setGo(false)}}>
+                    <TouchableOpacity style={{ marginTop: 5, position: 'absolute', bottom: 100, zIndex: 99, width: '100%', paddingHorizontal: 40 }} onPress={continueRide}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 10, width: '100%', textAlign: 'center', padding: 10, borderRadius: 5 }}>Let's Go</Text>
                     </TouchableOpacity>
                     : 

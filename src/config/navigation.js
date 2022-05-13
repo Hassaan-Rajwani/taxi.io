@@ -6,20 +6,18 @@ import 'react-native-gesture-handler'
 import Dashbaord from '../view/Dashbaord'
 import Login from '../view/Login'
 import Trips from '../view/Trips'
+import Logout from '../view/Logout'
 import Home from '../view/Home'
 import Driver from '../view/Driver'
+import { useSelector } from 'react-redux'
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator()
 
 export default function MainNavigator() {
-    const user = true
+    const user = useSelector(state => state.userReducer.user)
     return (
         <NavigationContainer>
-            {/* <Stack.Navigator>
-                <Stack.Screen name="Login" component={Login} />
-                <Stack.Screen name="Dashboard" component={Dashbaord} />
-            </Stack.Navigator> */}
             {user ? <MyDrawer /> : <AuthStack />}
         </NavigationContainer>
     )
@@ -45,6 +43,7 @@ function MyDrawer() {
         <Drawer.Navigator useLegacyImplementation={true}>
             <Drawer.Screen name="Dashboard Stack" component={DashboardStack} />
             <Drawer.Screen name="Your Trips" component={Trips} />
+            <Drawer.Screen name="LogOut" component={Logout} />
         </Drawer.Navigator>
     );
 }   

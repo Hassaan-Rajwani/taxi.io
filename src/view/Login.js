@@ -1,8 +1,12 @@
 import { StyleSheet, Text, View, Image, TextInput, Alert, TouchableOpacity } from 'react-native';
 import logo3 from '../../images/logo3.png';
 import * as Facebook from 'expo-facebook';
+import { addUser } from '../store/user/userAction';
+import { useDispatch } from 'react-redux'
 
 export default function Login({ navigation }) {
+    const dispatch = useDispatch()
+    
     async function logIn() {
         try {
             await Facebook.initializeAsync({
@@ -14,7 +18,11 @@ export default function Login({ navigation }) {
                 });
             if (type === 'success') {
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-                Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+                const user = await response.json()
+                alert('Hi' + user.name)
+                
+                console.log(user)
+                dispatch(addUser(user))
                 navigation.navigate('Dashboard')
             } else {
                 // type === 'cancel'
