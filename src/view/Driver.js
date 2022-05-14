@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TextInput, Alert, TouchableOpacity } from 'react-native';
 import logo3 from '../../images/logo3.png';
 import * as Facebook from 'expo-facebook';
-import addDriver from '../store/driver/driverAction';
+import { addDriver } from '../store/driver/driverAction';
 import { useDispatch } from 'react-redux'
 
 export default function Driver({navigation}) {
@@ -19,9 +19,12 @@ export default function Driver({navigation}) {
             if (type === 'success') {
                 // Get the user's name using Facebook's Graph API
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
-                Alert.alert('Logged in!', `Hi ${(await response.json()).name}!`);
+                const user = await response.json()
+                alert('Hi' + user.name)
+
+                console.log(user)
                 dispatch(addDriver(user))
-                navigation.navigate('Dashboard')
+                navigation.navigate('Driver Dashboard')
             } else {
                 // type === 'cancel'
             }

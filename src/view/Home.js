@@ -20,7 +20,7 @@ export default function Home({navigation}) {
                     <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 15, width: 300, textAlign: 'center', padding: 5, borderRadius: 5 }}>Continue As Driver</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={rider}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 15, width: 300, textAlign: 'center', padding: 5, borderRadius: 5 }}>Continue As Rider</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 15, width: 300, textAlign: 'center', padding: 5, borderRadius: 5 }}>Continue As User</Text>
                 </TouchableOpacity>
             </View>
         </View>

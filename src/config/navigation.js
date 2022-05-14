@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import 'react-native-gesture-handler'
 import Dashbaord from '../view/Dashbaord'
+import Driverdashboard from '../view/Driverdashboard'
 import Login from '../view/Login'
 import Trips from '../view/Trips'
 import Logout from '../view/Logout'
@@ -16,9 +17,11 @@ const Drawer = createDrawerNavigator()
 
 export default function MainNavigator() {
     const user = useSelector(state => state.userReducer.user)
+    const driver = useSelector(state => state.driverReducer.user)
     return (
         <NavigationContainer>
-            {user ? <MyDrawer /> : <AuthStack />}
+            {/* {user ? <MyDrawer /> : <AuthStack />} */}
+            {driver ? <DriverDrawer /> : <AuthStack />}
         </NavigationContainer>
     )
 }
@@ -35,6 +38,14 @@ function DashboardStack() {
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Dashboard" component={Dashbaord} />
+            <Stack.Screen name="Driver Dashboard" component={Driverdashboard} />
+        </Stack.Navigator>
+    )
+}
+function DriverDashboardStack() {
+    return (
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Driver Dashboard" component={Driverdashboard} />
         </Stack.Navigator>
     )
 }
@@ -43,6 +54,14 @@ function MyDrawer() {
         <Drawer.Navigator useLegacyImplementation={true}>
             <Drawer.Screen name="Dashboard Stack" component={DashboardStack} />
             <Drawer.Screen name="Your Trips" component={Trips} />
+            <Drawer.Screen name="LogOut" component={Logout} />
+        </Drawer.Navigator>
+    );
+}   
+function DriverDrawer() {
+    return (
+        <Drawer.Navigator useLegacyImplementation={true}>
+            <Drawer.Screen name="Driver Dashboard Stack" component={DriverDashboardStack} />
             <Drawer.Screen name="LogOut" component={Logout} />
         </Drawer.Navigator>
     );

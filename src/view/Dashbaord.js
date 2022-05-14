@@ -8,7 +8,6 @@ import { useSelector } from 'react-redux'
 import { userInfo } from '../config/firebase'
 
 export default function Dashbaord() {
-    const vehicals = ['Ride Ac', 'Ride', 'Ride Mini', 'Auto', 'Bike', 'Bike']
     const [selectVehical, setSelectVehical] = useState('')
     const [query, setQuery] = useState('')
     const [query2, setQuery2] = useState('')
@@ -33,7 +32,6 @@ export default function Dashbaord() {
     })
 
     const user = useSelector(state => state.userReducer.user)
-    const driver = useSelector(state => state.driverReducer.user)
 
     useEffect(() => {
         (async () => {
@@ -86,7 +84,7 @@ export default function Dashbaord() {
 
     const continueRide = () => {
         setGo(false)
-        userInfo(user.name, user.id, location, location2, selectVehical)
+        userInfo(user.name, user.id, location, location2, selectVehical, 'Pending')
     }
 
     return (
@@ -170,13 +168,21 @@ export default function Dashbaord() {
                 opt ?
                     <View style={{ width: '100%', height: 250, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
                         <ScrollView style={styles.scrollView}>
-                            {vehicals.map((item, index) => {
+                            <View style={{ width: '100%', backgroundColor: 'white' }}>  
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ac Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Ac Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Mini Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Mini Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Auto Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Auto Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Bike Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Bike Ride</Text>
+                            </View>
+                            {/* {vehicals.map((item, index) => {
                                 return (
                                     <View style={{ width: '100%', backgroundColor: 'white' }}>
                                         <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical(selectVehical[index]), console.log(selectVehical) }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
                                     </View>
                                 )
-                            })}
+                            })} */}
                         </ScrollView>
                     </View>
                     :

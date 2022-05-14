@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"
-import { collection, addDoc, doc, setDoc, getDocs, getDoc } from "firebase/firestore";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getFirestore, collection, doc, addDoc, getDocs, setDoc} from "firebase/firestore"
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
     apiKey: "AIzaSyD8RuLTlS_n8xrPZxlXChrACfFoI1Ldfg4",
@@ -14,19 +13,17 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth()
 const db = getFirestore()
-const storage = getStorage();
 
-async function userInfo(name, id, pickUp, dropOff, status, rideType) {
+async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, userRideType) {
     try {
-        await addDoc(collection(db, "adUser"), {
-            name: name,
-            id: id,
-            pickUp: pickUp,
-            dropOff: dropOff,
-            status: status,
-            rideType: rideType
+        await addDoc(collection(db, "userRideRequest"), {
+            name: userName,
+            id: userId,
+            pickUp: userPickUp,
+            dropOff: userDropOff,
+            status: userStatus,
+            rideType: userRideType
         })
         alert('Searching For A Driver...')
     } catch (e) {
@@ -34,6 +31,16 @@ async function userInfo(name, id, pickUp, dropOff, status, rideType) {
     }
 }
 
+async function getUserInfo() {
+    const querySnapshot = await getDocs(collection(db, "userRideRequest"))
+    const ads = []
+    querySnapshot.forEach((doc) => {
+        ads.push({ ...doc.data(), id: doc.id })
+    })
+    return ads
+}
+
 export {
-    userInfo
+    userInfo,
+    getUserInfo
 }

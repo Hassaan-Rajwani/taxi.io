@@ -1,12 +1,14 @@
 import { View, Text, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { addUser } from '../store/user/userAction'
+import { addDriver } from '../store/driver/driverAction'
 import { useDispatch } from 'react-redux'
 
 export default function Logout() {
     const dispatch = useDispatch()
     const out = () => {
         dispatch(addUser(null))
+        dispatch(addDriver(null))
     }
     return (
         <View>
