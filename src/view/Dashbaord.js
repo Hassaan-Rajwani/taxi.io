@@ -6,6 +6,8 @@ import MapView, { Marker, Polyline } from 'react-native-maps'
 import Autocomplete from 'react-native-autocomplete-input'
 import { useSelector } from 'react-redux'
 import { userInfo } from '../config/firebase'
+import { getDriverInfo } from '../config/firebase'
+import { LogBox } from 'react-native';
 
 export default function Dashbaord() {
     const [selectVehical, setSelectVehical] = useState('')
@@ -18,6 +20,7 @@ export default function Dashbaord() {
     const [marker, setMarker] = useState(false)
     const [opt, setOpt] = useState(false)
     const [go, setGo] = useState(false)
+    const [driverData, setDriverData] = useState([])
     const [location, setLocation] = useState({
         latitude: 24.9791542,
         longitude: 67.0951098,
@@ -31,6 +34,7 @@ export default function Dashbaord() {
         longitudeDelta: 0.001,
     })
 
+    LogBox.ignoreLogs(['Setting a timer']);
     const user = useSelector(state => state.userReducer.user)
 
     useEffect(() => {
@@ -51,8 +55,19 @@ export default function Dashbaord() {
             //     const { coords: { longitude, latitude } } = currentLocation
             //     setLocation({ ...location, longitude, latitude });
             // })
+            const driverInfo = await getDriverInfo()
+            setDriverData(driverInfo)
+            console.log(driverData)
         })();
     }, []);
+
+    if (!driverData.length > 0) {
+        return (
+            <View style={styles.container}>
+                <Text>Loading...</Text>
+            </View>
+        )
+    }
 
     const getPlaces = async (text) => {
         setQuery(text)
@@ -166,23 +181,19 @@ export default function Dashbaord() {
 
             {
                 opt ?
-                    <View style={{ width: '100%', height: 250, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
+                    <View style={{ width: '100%', height: 350, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
+                        <View style={{width: '100%', alignItems: 'center', backgroundColor: '#006170', paddingBottom: 15}}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', paddingHorizontal: 10, paddingTop: 10, color: 'white' }}>Select Vehical</Text>
+                        </View>
                         <ScrollView style={styles.scrollView}>
                             <View style={{ width: '100%', backgroundColor: 'white' }}>  
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ac Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Ac Ride</Text>
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Ride</Text>
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Mini Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Mini Ride</Text>
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Auto Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Auto Ride</Text>
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Bike Ride</Text>
-                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>Bike Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ac Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Ac Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Mini Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Mini Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Auto Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Auto Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Bike Ride</Text>
+                                <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Bike Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Bike Ride</Text>
                             </View>
-                            {/* {vehicals.map((item, index) => {
-                                return (
-                                    <View style={{ width: '100%', backgroundColor: 'white' }}>
-                                        <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical(selectVehical[index]), console.log(selectVehical) }} style={{ width: '100%', padding: 30, backgroundColor: 'white' }}>{item}</Text>
-                                    </View>
-                                )
-                            })} */}
                         </ScrollView>
                     </View>
                     :
@@ -197,6 +208,10 @@ export default function Dashbaord() {
                     : 
                     null
             }
+
+            <View>
+                <Text>{driverData.name}</Text>
+            </View>
         </View>
     )
 }

@@ -3,10 +3,11 @@ import logo3 from '../../images/logo3.png';
 import * as Facebook from 'expo-facebook';
 import { addUser } from '../store/user/userAction';
 import { useDispatch } from 'react-redux'
+import { users } from '../config/firebase';
 
 export default function Login({ navigation }) {
     const dispatch = useDispatch()
-    
+
     async function logIn() {
         try {
             await Facebook.initializeAsync({
@@ -20,9 +21,10 @@ export default function Login({ navigation }) {
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
                 const user = await response.json()
                 alert('Hi' + user.name)
-                
+
                 console.log(user)
                 dispatch(addUser(user))
+                users(user.name, user.id)
                 navigation.navigate('Dashboard')
             } else {
                 // type === 'cancel'

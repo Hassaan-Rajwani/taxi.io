@@ -15,6 +15,30 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore()
 
+async function users(userName, userId) {
+    try {
+        await addDoc(collection(db, "users"), {
+            name: userName,
+            id: userId
+        })
+        alert('User Added')
+    } catch (e) {
+        alert(e.message)
+    }
+}
+
+async function drivers(userName, userId) {
+    try {
+        await addDoc(collection(db, "drivers"), {
+            name: userName,
+            id: userId
+        })
+        alert('Driver Added')
+    } catch (e) {
+        alert(e.message)
+    }
+}
+
 async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, userRideType) {
     try {
         await addDoc(collection(db, "userRideRequest"), {
@@ -31,6 +55,19 @@ async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, u
     }
 }
 
+async function driverAccept(userName, userId, userLocation) {
+    try {
+        await addDoc(collection(db, "DriverAccepted"), {
+            name: userName,
+            id: userId,
+            location: userLocation
+        })
+        alert('Accepted ...')
+    } catch (e) {
+        alert(e.message)
+    }
+}
+
 async function getUserInfo() {
     const querySnapshot = await getDocs(collection(db, "userRideRequest"))
     const ads = []
@@ -40,7 +77,21 @@ async function getUserInfo() {
     return ads
 }
 
+async function getDriverInfo() {
+    const querySnapshot = await getDocs(collection(db, "DriverAccepted"))
+    const ads = []
+    querySnapshot.forEach((doc) => {
+        ads.push({ ...doc.data(), id: doc.id })
+    })
+    return ads
+}
+
+
 export {
     userInfo,
-    getUserInfo
+    getUserInfo,
+    users,
+    drivers,
+    driverAccept,
+    getDriverInfo
 }

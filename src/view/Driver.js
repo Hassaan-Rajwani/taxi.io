@@ -3,6 +3,7 @@ import logo3 from '../../images/logo3.png';
 import * as Facebook from 'expo-facebook';
 import { addDriver } from '../store/driver/driverAction';
 import { useDispatch } from 'react-redux'
+import { drivers } from '../config/firebase';
 
 export default function Driver({navigation}) {
     const dispatch = useDispatch()
@@ -17,13 +18,13 @@ export default function Driver({navigation}) {
                     permissions: ['public_profile'],
                 });
             if (type === 'success') {
-                // Get the user's name using Facebook's Graph API
                 const response = await fetch(`https://graph.facebook.com/me?access_token=${token}`);
                 const user = await response.json()
                 alert('Hi' + user.name)
 
                 console.log(user)
                 dispatch(addDriver(user))
+                drivers(user.name, user.id)
                 navigation.navigate('Driver Dashboard')
             } else {
                 // type === 'cancel'

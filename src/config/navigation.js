@@ -20,8 +20,8 @@ export default function MainNavigator() {
     const driver = useSelector(state => state.driverReducer.user)
     return (
         <NavigationContainer>
-            {/* {user ? <MyDrawer /> : <AuthStack />} */}
-            {driver ? <DriverDrawer /> : <AuthStack />}
+            {user ? <MyDrawer /> : <AuthStack />}
+            {/* {driver ? <DriverDrawer /> : <AuthStack />} */}
         </NavigationContainer>
     )
 }

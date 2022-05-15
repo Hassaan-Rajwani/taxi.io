@@ -1,11 +1,17 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, ScrollView, Image } from 'react-native'
 import { useState, useEffect } from 'react'
 import MapView, { Marker } from 'react-native-maps'
 import * as Location from 'expo-location'
-// import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { getUserInfo } from '../config/firebase'
+import accept from '../../images/correct.png'
+import reject from '../../images/failed.png'
+import { driverAccept } from '../config/firebase'
+import { LogBox } from 'react-native';
 
 export default function Driverdashboard() {
+    const [request, setRequest] = useState(false)
+    const [driversWill, setDriversWill] = useState('')
     const [rideData, setRideData] = useState([])
     const [location, setLocation] = useState({
         latitude: 24.9791542,
@@ -14,7 +20,8 @@ export default function Driverdashboard() {
         longitudeDelta: 0.001,
     })
 
-    // const driver = useSelector(state => state.driverReducer.user)
+    LogBox.ignoreLogs(['Setting a timer']);
+    const driver = useSelector(state => state.driverReducer.user)
 
     useEffect(() => {
         (async () => {
@@ -37,6 +44,7 @@ export default function Driverdashboard() {
             const userData = await getUserInfo()
             setRideData(userData)
             console.log(rideData)
+            // setRequest(true)
         })();
     }, []);
 
@@ -47,6 +55,15 @@ export default function Driverdashboard() {
             </View>
         )
     }
+    const ifAccepted = () => {
+        setDriversWill(true)
+        driverAccept(driver.name, driver.id, location)
+    }
+
+    const ifRejected = () => {
+        setDriversWill(false)
+    }
+
     return (
         <View style={{ width: "100%" }}>
             <MapView
@@ -64,9 +81,31 @@ export default function Driverdashboard() {
                     onDragStart={() => setLocation()}
                 />
             </MapView>
-            <View>
-                <Text style={{position: 'absolute', bottom: 100}}>{rideData[0].name}</Text>
+
+            {/* { */}
+            {/* request ?  */}
+            <View style={{ width: '100%', height: 500, backgroundColor: 'white', position: 'absolute', bottom: 0 }}>
+                <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#006170', paddingBottom: 15 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', paddingHorizontal: 10, paddingTop: 10, color: 'white' }}>Rider Request</Text>
+                </View>
+                <ScrollView style={styles.scrollView}>
+                    {rideData.map((item, index) => {
+                        return (
+                            <View style={{ width: '100%', flexDirection: 'row' }}>
+                                <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 20 }}>{item.name}</Text>
+                                <TouchableOpacity onPress={ifAccepted}>
+                                    <Image style={{ marginTop: 15 }} source={accept} />
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={ifRejected}>
+                                    <Image style={{ marginTop: 15, marginLeft: 10 }} source={reject} />
+                                </TouchableOpacity>
+                            </View>
+                        )
+                    })}
+                </ScrollView>
             </View>
+            {/* : null */}
+            {/* } */}
         </View>
     )
 }
@@ -75,5 +114,14 @@ const styles = StyleSheet.create({
     map: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    scrollView: {
+        width: '100%',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
     }
 })
