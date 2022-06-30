@@ -39,7 +39,7 @@ async function drivers(userName, userId) {
     }
 }
 
-async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, userRideType) {
+async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, userRideType, userArea, ridePrice) {
     try {
         await addDoc(collection(db, "userRideRequest"), {
             name: userName,
@@ -47,7 +47,9 @@ async function userInfo(userName, userId, userPickUp, userDropOff, userStatus, u
             pickUp: userPickUp,
             dropOff: userDropOff,
             status: userStatus,
-            rideType: userRideType
+            rideType: userRideType,
+            area: userArea,
+            price: ridePrice
         })
         alert('Searching For A Driver...')
     } catch (e) {

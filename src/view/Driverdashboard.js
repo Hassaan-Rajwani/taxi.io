@@ -91,8 +91,9 @@ export default function Driverdashboard() {
                 <ScrollView style={styles.scrollView}>
                     {rideData.map((item, index) => {
                         return (
-                            <View style={{ width: '100%', flexDirection: 'row' }}>
-                                <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 20 }}>{item.name}</Text>
+                            <View key={index} style={{ width: '100%', flexDirection: 'row', justifyContent: 'center', backgroundColor: 'lightgrey'}}>
+                                {/* <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 20 }}>{item.name}</Text> */}
+                                <Text style={{ fontSize: 16, fontWeight: 'bold', padding: 20 }}>{item.area}</Text>
                                 <TouchableOpacity onPress={ifAccepted}>
                                     <Image style={{ marginTop: 15 }} source={accept} />
                                 </TouchableOpacity>

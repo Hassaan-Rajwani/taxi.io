@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux'
 import { userInfo } from '../config/firebase'
 import { getDriverInfo } from '../config/firebase'
 import { LogBox } from 'react-native';
+import { getDistance } from 'geolib';
 
 export default function Dashbaord() {
     const [selectVehical, setSelectVehical] = useState('')
@@ -61,7 +62,7 @@ export default function Dashbaord() {
         })();
     }, []);
 
-    if (!driverData.length > 0) {
+    if (driverData.length < 0) {
         return (
             <View style={styles.container}>
                 <Text>Loading...</Text>
@@ -99,7 +100,9 @@ export default function Dashbaord() {
 
     const continueRide = () => {
         setGo(false)
-        userInfo(user.name, user.id, location, location2, selectVehical, 'Pending')
+        const km = getDistance({ latitude: location.latitude, longitude: location.longitude }, { latitude: location2.latitude, longitude: location2.longitude }) / 1000
+        const price = km * 10
+        userInfo(user.name, user.id, location, location2, selectVehical, 'Pending', query2, price)
     }
 
     return (
@@ -182,11 +185,11 @@ export default function Dashbaord() {
             {
                 opt ?
                     <View style={{ width: '100%', height: 350, backgroundColor: 'white', zIndex: 9, position: 'absolute', bottom: 0 }}>
-                        <View style={{width: '100%', alignItems: 'center', backgroundColor: '#006170', paddingBottom: 15}}>
+                        <View style={{ width: '100%', alignItems: 'center', backgroundColor: '#006170', paddingBottom: 15 }}>
                             <Text style={{ fontSize: 20, fontWeight: 'bold', paddingHorizontal: 10, paddingTop: 10, color: 'white' }}>Select Vehical</Text>
                         </View>
                         <ScrollView style={styles.scrollView}>
-                            <View style={{ width: '100%', backgroundColor: 'white' }}>  
+                            <View style={{ width: '100%', backgroundColor: 'white' }}>
                                 <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ac Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Ac Ride</Text>
                                 <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Ride</Text>
                                 <Text onPress={() => { setOpt(false), setGo(true), setSelectVehical('Mini Ride') }} style={{ width: '100%', padding: 30, backgroundColor: 'white', borderBottomWidth: 1, borderBottomColor: 'lightgrey' }}>Mini Ride</Text>
@@ -205,7 +208,7 @@ export default function Dashbaord() {
                     <TouchableOpacity style={{ marginTop: 5, position: 'absolute', bottom: 100, zIndex: 99, width: '100%', paddingHorizontal: 40 }} onPress={continueRide}>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', backgroundColor: '#006170', color: 'white', marginTop: 10, width: '100%', textAlign: 'center', padding: 10, borderRadius: 5 }}>Let's Go</Text>
                     </TouchableOpacity>
-                    : 
+                    :
                     null
             }
 
