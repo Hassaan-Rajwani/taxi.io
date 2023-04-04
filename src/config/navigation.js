@@ -21,6 +21,8 @@ export default function MainNavigator() {
     return (
         <NavigationContainer>
             {user ? <MyDrawer /> : <AuthStack />}
+            {/* {driver ? <DriverDrawer /> : <AuthStack />} */}
+
         </NavigationContainer>
     )
 }
