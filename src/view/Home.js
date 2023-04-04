@@ -7,6 +7,7 @@ export default function Home({navigation}) {
     }
     const driver = () => {
         navigation.navigate('Driver Login')
+        
     }
     return (
         <View style={styles.container}>
